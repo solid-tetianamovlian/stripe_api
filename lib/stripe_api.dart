@@ -19,28 +19,13 @@ export 'model/source.dart';
 export 'model/token.dart';
 
 class Stripe {
-  static Stripe _instance;
-
   final StripeApiHandler _apiHandler = new StripeApiHandler();
 
   final String publishableKey;
   String stripeAccount;
 
-  Stripe._internal(this.publishableKey);
-
-  static void init(String publishableKey) {
-    if (_instance == null) {
-      _validateKey(publishableKey);
-      _instance = new Stripe._internal(publishableKey);
-    }
-  }
-
-  static Stripe get instance {
-    if (_instance == null) {
-      throw new Exception(
-          "Attempted to get instance of Stripe without initialization");
-    }
-    return _instance;
+  Stripe(this.publishableKey) {
+    _validateKey(publishableKey);
   }
 
   Future<Token> createCardToken(StripeCard card) async {

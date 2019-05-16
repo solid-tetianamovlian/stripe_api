@@ -18,14 +18,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   final TextEditingController controller = new TextEditingController();
+  Stripe _stripe;
 
   @override
   void initState() {
     super.initState();
 
-    Stripe.init('pk_test_your_stripe_key');
+    _stripe = Stripe('pk_test_your_stripe_key');
   }
 
   @override
@@ -43,17 +43,13 @@ class _MyAppState extends State<MyApp> {
               new TextField(
                 controller: controller,
                 inputFormatters: [
-                  CardNumberFormatter(
-                    onCardBrandChanged: (brand) {
-                      print('onCardBrandChanged : ' + brand);
-                    },
-                    onCardNumberComplete: (){
-                      print('onCardNumberComplete');
-                    },
-                    onShowError: (isError) {
-                      print('Is card number valid ? ${!isError}');
-                    }
-                  ),
+                  CardNumberFormatter(onCardBrandChanged: (brand) {
+                    print('onCardBrandChanged : ' + brand);
+                  }, onCardNumberComplete: () {
+                    print('onCardNumberComplete');
+                  }, onShowError: (isError) {
+                    print('Is card number valid ? ${!isError}');
+                  }),
                 ],
               ),
               new SizedBox(height: 12.0),
@@ -104,7 +100,7 @@ class _MyAppState extends State<MyApp> {
     StripeCard card = new StripeCard(
         number: '4242 4242 4242 4242', cvc: '713', expMonth: 5, expYear: 2019);
     card.name = 'Jhonny Bravo';
-    Stripe.instance.createCardToken(card).then((c) {
+    _stripe.createCardToken(card).then((c) {
       print(c);
       return CustomerSession.instance.addCustomerSource(c.id);
     }).then((source) {
